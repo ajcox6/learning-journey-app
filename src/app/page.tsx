@@ -1,7 +1,7 @@
 'use client';
 import styles from "./page.module.css";
 import { placeholderData } from "./something/placeholder-data";
-import { useState } from "react";
+import React, { BaseSyntheticEvent, useState } from "react";
 
 export default function Home() {
 
@@ -16,10 +16,10 @@ export default function Home() {
 
   /**
    * Filter the items in the list and set the selected filter value
-   * @param e button clicked event
+   * @param event button clicked event
    */
-  const filterButton = (e: any) => {
-    const status = e.target.value;
+  const filterButton = (event: BaseSyntheticEvent) => {
+    const status = event.target.value;
 
     if (status === Status.IN_PROGRESS) {
       setSelectedFilter(Status.IN_PROGRESS);
