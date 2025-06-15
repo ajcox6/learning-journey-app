@@ -1,57 +1,20 @@
-'use client';
+import { createClient } from "../../utils/supabase/server";
+import Journeys from "./journeys/journeys";
 import styles from "./page.module.css";
-import { placeholderData } from "./something/placeholder-data";
-import React, { BaseSyntheticEvent, useState } from "react";
 
-export default function Home() {
+export default async function Home() {
 
-  enum Status {
-    ALL = 'all',
-    IN_PROGRESS = 'in progress',
-    COMPLETED = 'completed'
-  }
+  const supabase = await createClient();
 
-  const [items, setItems] = useState(placeholderData);
-  const [selectedFilter, setSelectedFilter] = useState(Status.ALL);
-
-  /**
-   * Filter the items in the list and set the selected filter value
-   * @param event button clicked event
-   */
-  const filterButton = (event: BaseSyntheticEvent) => {
-    const status = event.target.value;
-
-    if (status === Status.IN_PROGRESS) {
-      setSelectedFilter(Status.IN_PROGRESS);
-      setItems(placeholderData.filter(item => item.status === Status.IN_PROGRESS));
-    } else if (status === Status.COMPLETED) {
-      setSelectedFilter(Status.COMPLETED);
-      setItems(placeholderData.filter(item => item.status === Status.COMPLETED));
-    } else {
-      setSelectedFilter(Status.ALL);
-      setItems(placeholderData);
-    }
-  }
-
-  const itemsList = items.map(data =>
-    <div key={data.id} className={styles.item}>
-      <p className={data.status === Status.COMPLETED ? styles.completed : styles.status}>{data.status}</p>
-      <h3>{data.title}</h3>
-      <p className={styles.description}>{data.description}</p>
-    </div>);
+  const { data: journeys } = await supabase
+    .from('journeys')
+    .select();
 
   return (
     <div className={styles.page}>
       <main className={styles.main}>
-
         <h1>Learning Journey Planner</h1>
-        <div className={styles.buttons}>
-          <button className={selectedFilter === Status.ALL ? styles.active : styles.button} value={Status.ALL} onClick={filterButton}>All</button>
-          <button className={selectedFilter === Status.IN_PROGRESS ? styles.active : styles.button} value={Status.IN_PROGRESS} onClick={filterButton}>In Progress</button>
-          <button className={selectedFilter === Status.COMPLETED ? styles.active : styles.button} value={Status.COMPLETED} onClick={filterButton}>Completed</button>
-        </div>
-
-        <div>{itemsList}</div>
+        <Journeys journeys={journeys} />
       </main>
     </div>
 
